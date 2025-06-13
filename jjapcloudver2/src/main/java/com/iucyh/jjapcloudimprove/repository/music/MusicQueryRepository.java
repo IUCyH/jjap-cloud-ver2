@@ -38,7 +38,7 @@ public class MusicQueryRepository {
                         )
                 )
                 .from(music)
-                .where(music.createdAt.lt(date))
+                .where(music.createdAt.lt(date), music.deletedAt.isNull())
                 .orderBy(music.createdAt.desc())
                 .limit(limit)
                 .fetch();
