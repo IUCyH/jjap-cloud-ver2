@@ -1,2 +1,3 @@
 # jjap-cloud-ver2
-JJAP Cloud 개선판
+
+## [ERD](https://www.erdcloud.com/d/9Jkbyc2hKhwpnKJKf)
