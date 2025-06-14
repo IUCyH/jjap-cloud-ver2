@@ -40,4 +40,10 @@ public class Music extends BaseEntity {
         music.publicId = UUID.randomUUID().toString().replace("-", "");
         return music;
     }
+
+    public void update(String title) {
+        if(title != null) {
+            this.title = title;
+        }
+    }
 }
