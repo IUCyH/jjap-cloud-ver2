@@ -1,5 +1,6 @@
 package com.iucyh.jjapcloudimprove.common.util.file;
 
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 public class LocalFileStorageService implements FileStorageService {
 
     private static final String ROOT_DIR_NAME = "jjapcloud_file";
+    private final Tika tika = new Tika();
 
     @Override
     public LimitedInputStream stream(String storeName, long start, long end) {
@@ -69,6 +71,16 @@ public class LocalFileStorageService implements FileStorageService {
             throw new RuntimeException("No such file: " + storeName);
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete file", e);
+        }
+    }
+
+    @Override
+    public boolean checkMimeType(MultipartFile file, FileMimeType mimeType) {
+        try {
+            String detectedMimeType = tika.detect(file.getInputStream());
+            return detectedMimeType.equalsIgnoreCase(mimeType.getType());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to detect mime type", e);
         }
     }
 

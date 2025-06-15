@@ -9,4 +9,5 @@ public interface FileStorageService {
     LimitedInputStream stream(String storeName, long start, long end);
     String store(MultipartFile file);
     void delete(String storeName);
+    boolean checkMimeType(MultipartFile file, FileMimeType mimeType);
 }
