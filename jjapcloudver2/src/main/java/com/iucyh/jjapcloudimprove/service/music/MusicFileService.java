@@ -6,11 +6,13 @@ import com.iucyh.jjapcloudimprove.common.util.file.FileMimeType;
 import com.iucyh.jjapcloudimprove.common.util.file.FileStorageService;
 import com.iucyh.jjapcloudimprove.common.util.file.LimitedInputStream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MusicFileService {
 
@@ -26,14 +28,37 @@ public class MusicFileService {
     }
 
     public String storeFile(MultipartFile file) {
-        try {
-            if (!fileService.checkMimeType(file, FileMimeType.MP3)) {
-                throw new ServiceException(ServiceErrorCode.MUSIC_INVALID_MIME_TYPE, "Invalid file type");
-            }
+        checkMimeType(file);
 
+        try {
             return fileService.store(file);
         } catch (RuntimeException e) {
             throw new ServiceException(ServiceErrorCode.MUSIC_UPLOAD_ERROR, e.getMessage(), e);
+        }
+    }
+
+    public String replaceFile(MultipartFile file, String storeName) {
+        checkMimeType(file);
+
+        String newStoreName = null;
+        try {
+            newStoreName = fileService.store(file);
+        } catch (RuntimeException e) {
+            throw new ServiceException(ServiceErrorCode.MUSIC_UPLOAD_ERROR, e.getMessage(), e);
+        }
+
+        try {
+            fileService.delete(storeName);
+            return newStoreName;
+        } catch (RuntimeException e) {
+            if (newStoreName != null) {
+                try {
+                    fileService.delete(newStoreName);
+                } catch (RuntimeException e1) {
+                    log.warn("Failed to rollback file: {}", newStoreName, e1);
+                }
+            }
+            throw new ServiceException(ServiceErrorCode.MUSIC_DELETE_ERROR, e.getMessage(), e);
         }
     }
 
@@ -42,6 +67,12 @@ public class MusicFileService {
             fileService.delete(storeName);
         } catch (RuntimeException e) {
             throw new ServiceException(ServiceErrorCode.MUSIC_DELETE_ERROR, e.getMessage(), e);
+        }
+    }
+
+    private void checkMimeType(MultipartFile file) {
+        if (!fileService.checkMimeType(file, FileMimeType.MP3)) {
+            throw new ServiceException(ServiceErrorCode.MUSIC_INVALID_MIME_TYPE, "Invalid file type");
         }
     }
 }
