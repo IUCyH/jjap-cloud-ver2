@@ -28,6 +28,11 @@ public class MusicFileService {
         }
     }
 
+    /**
+     * Don't use it directly, Please use it through (MusicFacade).save method.
+     * @param file
+     * @return Result after store a music
+     */
     public MusicFileStoreResult storeFile(MultipartFile file) {
         checkMimeType(file);
 

@@ -17,6 +17,15 @@ public class MusicFacade {
     private final MusicService musicService;
     private final MusicFileService musicFileService;
 
+    /**
+     * Save music file and save metadata in DB,
+     * if failed to save metadata in DB but success to save a file, the saved file will be rollback.
+     * And if rollback is failed, it will be logged as warn
+     * @param userId
+     * @param musicDto
+     * @param file
+     * @return Saved entity's public id
+     */
     public String save(Long userId, CreateMusicDto musicDto, MultipartFile file) {
         MusicFileStoreResult result = null;
 

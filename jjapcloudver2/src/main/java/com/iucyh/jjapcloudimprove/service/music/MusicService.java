@@ -32,6 +32,13 @@ public class MusicService {
                 .toList();
     }
 
+    /**
+     * Don't use it directly, Please use it through (MusicFacade).save method.
+     * @param userId
+     * @param storeResult
+     * @param musicDto
+     * @return Saved entity's public id
+     */
     @Transactional
     public String createMusic(Long userId, MusicFileStoreResult storeResult, CreateMusicDto musicDto) {
         Music music = Music.of(musicDto.getTitle(), storeResult.getStoreName(), storeResult.getPlayTime());
