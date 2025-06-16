@@ -40,7 +40,7 @@ public class MusicFileService {
             String storeName = fileService.store(file);
             long playTime = calculatePlayTime(file.getSize());
 
-            return new MusicFileStoreResult(storeName, playTime);
+            return new MusicFileStoreResult(storeName, playTime, file.getSize());
         } catch (RuntimeException e) {
             throw new ServiceException(ServiceErrorCode.MUSIC_UPLOAD_ERROR, e.getMessage(), e);
         }
@@ -58,7 +58,6 @@ public class MusicFileService {
 
         try {
             fileService.delete(storeName);
-            return newStoreName;
         } catch (RuntimeException e) {
             if (newStoreName != null) {
                 try {
@@ -69,6 +68,8 @@ public class MusicFileService {
             }
             throw new ServiceException(ServiceErrorCode.MUSIC_DELETE_ERROR, e.getMessage(), e);
         }
+
+        return newStoreName;
     }
 
     public void deleteFile(String storeName) {

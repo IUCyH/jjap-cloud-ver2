@@ -43,7 +43,7 @@ public class MusicService {
      */
     @Transactional
     public String createMusic(Long userId, MusicFileStoreResult storeResult, CreateMusicDto musicDto) {
-        Music music = Music.of(musicDto.getTitle(), storeResult.getStoreName(), storeResult.getPlayTime());
+        Music music = Music.of(musicDto.getTitle(), storeResult.getStoreName(), storeResult.getPlayTime(), storeResult.getFileSize());
         musicRepository.save(music);
         return music.getPublicId();
     }

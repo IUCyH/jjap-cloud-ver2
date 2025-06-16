@@ -24,6 +24,9 @@ public class Music extends BaseEntity {
     private String storeName;
 
     @Column(nullable = false)
+    private Long fileSize;
+
+    @Column(nullable = false)
     private Long playTime;
 
     @Column(nullable = false)
@@ -31,11 +34,12 @@ public class Music extends BaseEntity {
 
     protected Music() {}
 
-    public static Music of(String title, String storeName, Long playTime) {
+    public static Music of(String title, String storeName, Long playTime, Long fileSize) {
         Music music = new Music();
         music.title = title;
         music.storeName = storeName;
         music.playTime = playTime;
+        music.fileSize = fileSize;
         music.viewCount = 0;
         music.publicId = UUID.randomUUID().toString().replace("-", "");
         return music;
