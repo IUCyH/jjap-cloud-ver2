@@ -1,5 +1,7 @@
 package com.iucyh.jjapcloudimprove.service.music;
 
+import com.iucyh.jjapcloudimprove.common.exception.ServiceException;
+import com.iucyh.jjapcloudimprove.common.exception.errorcode.ServiceErrorCode;
 import com.iucyh.jjapcloudimprove.domain.music.Music;
 import com.iucyh.jjapcloudimprove.dto.music.CreateMusicDto;
 import com.iucyh.jjapcloudimprove.dto.music.MusicDto;
@@ -48,13 +50,15 @@ public class MusicService {
 
     @Transactional
     public void updateMusic(Long userId, String musicPublicId, UpdateMusicDto musicDto) {
-        Music foundMusic = musicRepository.findByPublicId(musicPublicId);
+        Music foundMusic = musicRepository.findByPublicId(musicPublicId)
+                        .orElseThrow(() -> new ServiceException(ServiceErrorCode.MUSIC_NOT_FOUND));
         foundMusic.update(musicDto.getTitle());
     }
 
     @Transactional
     public void deleteMusic(Long userId, String musicPublicId) {
-        Music foundMusic = musicRepository.findByPublicId(musicPublicId);
+        Music foundMusic = musicRepository.findByPublicId(musicPublicId)
+                .orElseThrow(() -> new ServiceException(ServiceErrorCode.MUSIC_NOT_FOUND));
         foundMusic.softDelete();
     }
 }
