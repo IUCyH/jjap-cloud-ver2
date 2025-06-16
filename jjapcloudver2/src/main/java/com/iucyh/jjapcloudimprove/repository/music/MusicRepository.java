@@ -1,6 +1,7 @@
 package com.iucyh.jjapcloudimprove.repository.music;
 
 import com.iucyh.jjapcloudimprove.domain.music.Music;
+import com.iucyh.jjapcloudimprove.repository.music.projection.MusicMetaDataProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,8 @@ import java.util.Optional;
 public interface MusicRepository extends JpaRepository<Music, Long> {
 
     Optional<Music> findByPublicId(String publicId);
+
+    Optional<MusicMetaDataProjection> findMetaDataByPublicId(String publicId);
 
     @Query("select m.storeName from Music m where m.publicId = :publicId")
     Optional<String> findStoreName(String publicId);
