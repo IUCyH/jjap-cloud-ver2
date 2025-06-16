@@ -33,10 +33,8 @@ public class MusicService {
     }
 
     @Transactional
-    public String createMusic(Long userId, CreateMusicDto musicDto) {
-        // TODO: 파일 저장
-        String tempStoreName = UUID.randomUUID().toString().replace("-", "");
-        Music music = Music.of(musicDto.getTitle(), tempStoreName, 10);
+    public String createMusic(Long userId, MusicFileStoreResult storeResult, CreateMusicDto musicDto) {
+        Music music = Music.of(musicDto.getTitle(), storeResult.getStoreName(), storeResult.getPlayTime());
         musicRepository.save(music);
         return music.getPublicId();
     }

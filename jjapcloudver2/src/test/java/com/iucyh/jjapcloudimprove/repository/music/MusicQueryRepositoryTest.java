@@ -30,10 +30,10 @@ class MusicQueryRepositoryTest {
     @DisplayName("음악 조회 페이징 - 성공")
     void musicPaging() {
         // given
-        Music music1 = Music.of("music1", "storeName", 10);
-        Music music2 = Music.of("music2", "storeName", 10);
-        Music music3 = Music.of("music3", "storeName", 10);
-        Music music4 = Music.of("music4", "storeName", 10);
+        Music music1 = Music.of("music1", "storeName", 10L);
+        Music music2 = Music.of("music2", "storeName", 10L);
+        Music music3 = Music.of("music3", "storeName", 10L);
+        Music music4 = Music.of("music4", "storeName", 10L);
 
         musicRepository.save(music1);
         musicRepository.save(music2);
@@ -81,7 +81,7 @@ class MusicQueryRepositoryTest {
     @DisplayName("음악 조회 페이징 - 삭제 후 결과없음")
     void musicPagingWithEmpty() {
         // given
-        Music music1 = Music.of("music1", "storeName", 10);
+        Music music1 = Music.of("music1", "storeName", 10L);
         musicRepository.save(music1);
 
         // when

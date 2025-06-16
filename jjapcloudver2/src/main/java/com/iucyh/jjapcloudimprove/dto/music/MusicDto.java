@@ -9,6 +9,6 @@ public class MusicDto {
 
     private String publicId;
     private String title;
-    private Integer playTime;
+    private Long playTime;
     private Integer viewCount;
 }

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MusicFileService {
 
+    private static final long MUSIC_BITRATE = 320000;
     private final FileStorageService fileService;
 
     public InputStreamResource streamFile(String storeName, long start, long end) {
@@ -27,11 +28,14 @@ public class MusicFileService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public MusicFileStoreResult storeFile(MultipartFile file) {
         checkMimeType(file);
 
         try {
-            return fileService.store(file);
+            String storeName = fileService.store(file);
+            long playTime = calculatePlayTime(file.getSize());
+
+            return new MusicFileStoreResult(storeName, playTime);
         } catch (RuntimeException e) {
             throw new ServiceException(ServiceErrorCode.MUSIC_UPLOAD_ERROR, e.getMessage(), e);
         }
@@ -74,5 +78,9 @@ public class MusicFileService {
         if (!fileService.checkMimeType(file, FileMimeType.MP3)) {
             throw new ServiceException(ServiceErrorCode.MUSIC_INVALID_MIME_TYPE, "Invalid file type");
         }
+    }
+
+    private long calculatePlayTime(long size) {
+        return size * 8 / MUSIC_BITRATE;
     }
 }

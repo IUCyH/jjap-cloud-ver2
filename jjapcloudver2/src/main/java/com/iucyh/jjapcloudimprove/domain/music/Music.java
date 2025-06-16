@@ -24,14 +24,14 @@ public class Music extends BaseEntity {
     private String storeName;
 
     @Column(nullable = false)
-    private Integer playTime;
+    private Long playTime;
 
     @Column(nullable = false)
     private Integer viewCount;
 
     protected Music() {}
 
-    public static Music of(String title, String storeName, Integer playTime) {
+    public static Music of(String title, String storeName, Long playTime) {
         Music music = new Music();
         music.title = title;
         music.storeName = storeName;
