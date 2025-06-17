@@ -20,7 +20,7 @@ public class Music extends BaseEntity {
     @Column(length = 128, nullable = false)
     private String title;
 
-    @Column(length = 32, nullable = false, updatable = false)
+    @Column(length = 36, nullable = false, updatable = false)
     private String storeName;
 
     @Column(nullable = false)
