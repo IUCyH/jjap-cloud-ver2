@@ -4,6 +4,10 @@ import com.iucyh.jjapcloudimprove.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "playlists")
 @Getter
@@ -20,6 +24,12 @@ public class Playlist extends BaseEntity {
 
     @Column(nullable = false)
     private Integer itemCount;
+
+    @Column(nullable = false)
+    private LocalDateTime lastPlayedAt;
+
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PlaylistItem> playlistItems = new ArrayList<>();
 
     protected Playlist() {}
 
