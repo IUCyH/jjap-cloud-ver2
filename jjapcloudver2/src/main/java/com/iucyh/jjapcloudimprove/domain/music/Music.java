@@ -4,8 +4,6 @@ import com.iucyh.jjapcloudimprove.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "musics")
 @Getter
@@ -41,7 +39,7 @@ public class Music extends BaseEntity {
         music.playTime = playTime;
         music.fileSize = fileSize;
         music.viewCount = 0;
-        music.publicId = UUID.randomUUID().toString().replace("-", "");
+        music.publicId = BaseEntity.generatePublicId();
         return music;
     }
 

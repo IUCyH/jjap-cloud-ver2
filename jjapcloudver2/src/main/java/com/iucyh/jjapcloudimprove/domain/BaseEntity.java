@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @MappedSuperclass
 @Getter
@@ -21,6 +22,10 @@ public abstract class BaseEntity {
     private LocalDateTime updatedAt;
 
     private LocalDateTime deletedAt;
+
+    protected static String generatePublicId() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 
     public void softDelete() {
         this.deletedAt = LocalDateTime.now();
