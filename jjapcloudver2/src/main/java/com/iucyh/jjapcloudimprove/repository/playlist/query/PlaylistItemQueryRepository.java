@@ -31,7 +31,7 @@ public class PlaylistItemQueryRepository {
         Object parsedCursor = sortType.parseCursor(cursor);
         BooleanExpression condition = switch (sortType) {
             case MUSIC_TITLE -> playlistItem.music.title.gt((String) parsedCursor).or(
-                    playlistItem.music.title.eq((String) parsedCursor).and(playlistItem.position.gt(cursorId))
+                    playlistItem.music.title.eq((String) parsedCursor).and(playlistItem.id.gt(cursorId))
             );
             case POSITION -> playlistItem.position.gt((Long) parsedCursor);
         };
@@ -54,7 +54,7 @@ public class PlaylistItemQueryRepository {
                         )
                 ))
                 .from(playlistItem)
-                .join(playlistItem.music, music).where(music.deletedAt.isNull())
+                .join(playlistItem.music, music).on(music.deletedAt.isNull())
                 .join(playlistItem.playlist, playlist)
                 .where(playlist.id.eq(playlistId), condition)
                 .orderBy(orderCondition, playlistItem.id.asc())

@@ -25,7 +25,7 @@ public class Playlist extends BaseEntity {
     @Column(nullable = false)
     private Integer itemCount;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime lastPlayedAt;
 
     @OneToMany(mappedBy = "playlist", cascade = CascadeType.PERSIST, orphanRemoval = true)

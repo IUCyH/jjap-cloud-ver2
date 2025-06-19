@@ -47,13 +47,13 @@ public class PlaylistQueryRepository {
                         playlist.publicId,
                         playlist.title,
                         playlist.itemCount,
-                        playlistItem.music.playTime.sum().coalesce(0L),
+                        music.playTime.sum().coalesce(0L),
                         playlist.createdAt,
                         playlist.updatedAt
                 ))
                 .from(playlist)
                 .leftJoin(playlist.playlistItems, playlistItem)
-                .join(playlistItem.music, music).where(music.deletedAt.isNull())
+                .leftJoin(playlistItem.music, music).on(music.deletedAt.isNull())
                 .where(
                         playlist.deletedAt.isNull(),
                         condition
