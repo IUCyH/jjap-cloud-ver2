@@ -40,4 +40,10 @@ public class Playlist extends BaseEntity {
         playlist.publicId = BaseEntity.generatePublicId();
         return playlist;
     }
+
+    public void update(String title) {
+        if(title != null) {
+            this.title = title;
+        }
+    }
 }

@@ -15,6 +15,9 @@ public enum ServiceErrorCode implements ErrorCode {
     MUSIC_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MUSIC-004", "Music upload error"),
     MUSIC_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "MUSIC-005", "Music delete error"),
 
+    // PLAYLIST
+    PLAYLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAYLIST-001", "Playlist not found"),
+
     // RANGE
     INVALID_RANGE_FORMAT(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, "RANGE-001", "Invalid range format");
 
