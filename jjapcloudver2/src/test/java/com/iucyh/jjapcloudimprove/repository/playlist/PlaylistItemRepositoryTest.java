@@ -46,23 +46,21 @@ class PlaylistItemRepositoryTest {
         em.clear();
 
         // when
-        String playlistPublicId = playlist1.getPublicId();
-        String musicPublicId = music1.getPublicId();
-
-        Playlist foundPlaylist = playlistRepository.findByPublicId(playlistPublicId).get();
-        Music foundMusic = musicRepository.findByPublicId(musicPublicId).get();
-
-        playlistRepository.increaseItemCount(foundMusic.getId());
-
-        Integer maxPosition = playlistItemRepository.findMaxPosition(foundPlaylist.getId())
+        Integer maxPosition = playlistItemRepository.findMaxPosition(1L)
                 .orElse(0);
         PlaylistItem playlistItem = PlaylistItem.of(maxPosition + 100, playlist1, music1);
         PlaylistItem savedPlaylistItem = playlistItemRepository.save(playlistItem);
 
+        playlistRepository.increaseItemCount(1L);
+
         // then
+        Playlist foundPlaylist = playlistRepository.findByPublicId(playlist1.getPublicId()).get();
+
+        assertThat(foundPlaylist.getItemCount()).isEqualTo(1);
+
         assertThat(savedPlaylistItem.getPosition()).isEqualTo(maxPosition + 100);
-        assertThat(savedPlaylistItem.getPlaylist().getTitle()).isEqualTo(playlist1.getTitle());
-        assertThat(savedPlaylistItem.getMusic().getTitle()).isEqualTo(music1.getTitle());
+        assertThat(savedPlaylistItem.getPlaylist().getPublicId()).isEqualTo(playlist1.getPublicId());
+        assertThat(savedPlaylistItem.getMusic().getPublicId()).isEqualTo(music1.getPublicId());
     }
 
     @Test
@@ -110,17 +108,16 @@ class PlaylistItemRepositoryTest {
 
         // then
         Optional<PlaylistItem> foundPlaylistItem = playlistItemRepository.findById(playlistItem.getId());
+        Optional<Playlist> foundPlaylist = playlistRepository.findByPublicId(playlist1.getPublicId());
+
         assertThat(foundPlaylistItem).isEmpty();
+        assertThat(foundPlaylist).isPresent();
+        assertThat(foundPlaylist.get().getItemCount()).isEqualTo(0);
     }
 
     private PlaylistItem createPlaylistItem(Playlist playlist, Music music) {
-        String playlistPublicId = playlist.getPublicId();
-        String musicPublicId = music.getPublicId();
-
-        Playlist foundPlaylist = playlistRepository.findByPublicId(playlistPublicId).get();
-        Music foundMusic = musicRepository.findByPublicId(musicPublicId).get();
-
-        playlistRepository.increaseItemCount(foundMusic.getId());
+        Playlist foundPlaylist = playlistRepository.findByPublicId(playlist.getPublicId()).get();
+        playlistRepository.increaseItemCount(foundPlaylist.getId());
 
         Integer maxPosition = playlistItemRepository.findMaxPosition(foundPlaylist.getId())
                 .orElse(0);
