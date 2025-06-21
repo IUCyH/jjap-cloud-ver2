@@ -69,18 +69,18 @@ public class PlaylistService {
     public void addPlaylistItem(Long userId, String playlistPublicId, AddPlaylistItemDto addPlaylistItemDto) {
         String musicPublicId = addPlaylistItemDto.getMusicPublicId();
 
-        Playlist playlist = playlistRepository.findByPublicId(playlistPublicId)
-                .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_NOT_FOUND));
-        Music music = musicService.findMusicEntity(musicPublicId);
-
         Boolean isExistsInPlaylist = playlistItemRepository.isMusicExistsInPlaylist(playlistPublicId, musicPublicId);
         if (isExistsInPlaylist) {
             throw new ServiceException(ServiceErrorCode.PLAYLIST_MUSIC_EXISTS);
         }
 
+        Playlist playlist = playlistRepository.findByPublicId(playlistPublicId)
+                .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_NOT_FOUND));
+        Music music = musicService.findMusicEntity(musicPublicId);
+
         Integer maxPosition = playlistItemRepository.findMaxPosition(playlist.getId())
                 .orElse(0);
-        PlaylistItem playlistItem = playlist.addItem(music, maxPosition + playlistItemPositionGap);
+        PlaylistItem playlistItem = PlaylistItem.of(maxPosition + playlistItemPositionGap, playlist, music);
         playlistItemRepository.save(playlistItem);
 
         playlistRepository.increaseItemCount(playlist.getId());
@@ -92,8 +92,8 @@ public class PlaylistService {
 
         PlaylistItem playlistItem = playlistItemRepository.findPlaylistItem(playlistPublicId, musicPublicId)
                 .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_ITEM_NOT_FOUND));
-        playlistItemRepository.delete(playlistItem);
 
+        playlistItemRepository.delete(playlistItem);
         playlistRepository.decreaseItemCount(playlistPublicId);
     }
 

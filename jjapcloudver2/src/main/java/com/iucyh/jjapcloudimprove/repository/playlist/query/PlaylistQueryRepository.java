@@ -52,7 +52,7 @@ public class PlaylistQueryRepository {
                         playlist.updatedAt
                 ))
                 .from(playlist)
-                .leftJoin(playlist.playlistItems, playlistItem)
+                .leftJoin(playlistItem).on(playlist.id.eq(playlistItem.playlist.id))
                 .leftJoin(playlistItem.music, music).on(music.deletedAt.isNull())
                 .where(
                         playlist.deletedAt.isNull(),

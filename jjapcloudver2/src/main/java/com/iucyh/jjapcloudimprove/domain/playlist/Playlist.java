@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 public class Playlist extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 32, nullable = false, unique = true, updatable = false)
@@ -28,9 +28,6 @@ public class Playlist extends BaseEntity {
 
     @Column
     private LocalDateTime lastPlayedAt;
-
-    @OneToMany(mappedBy = "playlist", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<PlaylistItem> playlistItems = new ArrayList<>();
 
     protected Playlist() {}
 
@@ -46,12 +43,5 @@ public class Playlist extends BaseEntity {
         if(title != null) {
             this.title = title;
         }
-    }
-
-    public PlaylistItem addItem(Music music, Integer position) {
-        PlaylistItem playlistItem = PlaylistItem.of(position, this, music);
-        playlistItems.add(playlistItem);
-
-        return playlistItem;
     }
 }

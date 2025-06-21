@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class PlaylistItem {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
