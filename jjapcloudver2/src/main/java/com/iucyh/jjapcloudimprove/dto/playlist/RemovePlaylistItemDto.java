@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AddPlaylistItemDto {
+public class RemovePlaylistItemDto {
 
     private String musicPublicId;
 }

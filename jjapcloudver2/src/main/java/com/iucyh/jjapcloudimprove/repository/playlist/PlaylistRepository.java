@@ -17,9 +17,14 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     Optional<Playlist> findByPublicId(String publicId);
 
     @Modifying(clearAutomatically = true)
+    @Query("update Playlist p set p.itemCount = p.itemCount + 1 where p.id = :playlistId")
+    void increaseItemCount(Long playlistId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Playlist p set p.itemCount = case when (p.itemCount - 1) < 0 then 0 else p.itemCount - 1 end where p.publicId = :playlistPublicId")
+    void decreaseItemCount(String playlistPublicId);
+
+    @Modifying(clearAutomatically = true)
     @Query("update Playlist p set p.lastPlayedAt = :lastPlayedAt where p.publicId = :publicId")
     void updateLastPlayedAt(@Param("lastPlayedAt") LocalDateTime lastPlayedAt, @Param("publicId") String publicId);
-
-    @Query(value = "select exists (select 1 from playlist_items pi join playlists p on p.id = pi.playlist_id join musics m on m.id = pi.music_id where p.public_id = :playlistPublicId and m.public_id = :musicPublicId)", nativeQuery = true)
-    Boolean isMusicExistsInPlaylist(@Param("playlistPublicId") String playlistPublicId, @Param("musicPublicId") String musicPublicId);
 }

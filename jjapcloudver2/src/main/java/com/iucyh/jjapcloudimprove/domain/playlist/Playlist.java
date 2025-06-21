@@ -51,7 +51,6 @@ public class Playlist extends BaseEntity {
     public PlaylistItem addItem(Music music, Integer position) {
         PlaylistItem playlistItem = PlaylistItem.of(position, this, music);
         playlistItems.add(playlistItem);
-        itemCount++;
 
         return playlistItem;
     }

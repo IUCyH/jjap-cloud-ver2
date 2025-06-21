@@ -6,13 +6,14 @@ import com.iucyh.jjapcloudimprove.domain.music.Music;
 import com.iucyh.jjapcloudimprove.domain.playlist.Playlist;
 import com.iucyh.jjapcloudimprove.domain.playlist.PlaylistItem;
 import com.iucyh.jjapcloudimprove.dto.IdDto;
-import com.iucyh.jjapcloudimprove.dto.playlist.AddPlaylistItemDto;
-import com.iucyh.jjapcloudimprove.dto.playlist.FindPlaylistCondition;
-import com.iucyh.jjapcloudimprove.dto.playlist.PlaylistDto;
+import com.iucyh.jjapcloudimprove.dto.playlist.*;
 import com.iucyh.jjapcloudimprove.dtomapper.playlist.PlaylistDtoMapper;
+import com.iucyh.jjapcloudimprove.dtomapper.playlist.PlaylistItemDtoMapper;
 import com.iucyh.jjapcloudimprove.repository.music.MusicRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.PlaylistItemRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.PlaylistRepository;
+import com.iucyh.jjapcloudimprove.repository.playlist.query.PlaylistItemQueryRepository;
+import com.iucyh.jjapcloudimprove.repository.playlist.query.PlaylistItemSortType;
 import com.iucyh.jjapcloudimprove.repository.playlist.query.PlaylistQueryRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.query.PlaylistSortType;
 import com.iucyh.jjapcloudimprove.service.music.MusicService;
@@ -29,12 +30,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PlaylistService {
 
-    private static final long pagingLimit = 50;
+    private static final long playlistPagingLimit = 50;
+    private static final long playlistItemPagingLimit = 100;
     private static final int playlistItemPositionGap = 100;
     private final MusicService musicService;
     private final PlaylistRepository playlistRepository;
     private final PlaylistItemRepository playlistItemRepository;
     private final PlaylistQueryRepository playlistQueryRepository;
+    private final PlaylistItemQueryRepository playlistItemQueryRepository;
 
     public List<PlaylistDto> findPlaylists(Long userId, FindPlaylistCondition condition) {
         PlaylistSortType sortType = condition.getSortType();
@@ -43,34 +46,56 @@ public class PlaylistService {
         Long playlistId = playlistRepository.findIdByPublicId(cursorId)
                 .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_NOT_FOUND));
 
-        return playlistQueryRepository.findPlaylists(sortType, cursor, playlistId, pagingLimit)
+        return playlistQueryRepository.findPlaylists(sortType, cursor, playlistId, playlistPagingLimit)
                 .stream()
                 .map(PlaylistDtoMapper::toPlaylistDto)
                 .toList();
     }
 
+    public List<PlaylistItemDto> findPlaylistItems(String playlistPublicId, FindPlaylistItemCondition condition) {
+        PlaylistItemSortType sortType = condition.getSortType();
+        String cursor = condition.getCursor();
+        Long cursorId = condition.getCursorId();
+        Long playlistId = playlistRepository.findIdByPublicId(playlistPublicId)
+                .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_NOT_FOUND));
+
+        return playlistItemQueryRepository.findPlaylistItems(playlistId, sortType, cursor, cursorId, playlistItemPagingLimit)
+                .stream()
+                .map(PlaylistItemDtoMapper::toPlaylistItemDto)
+                .toList();
+    }
+
     @Transactional
-    public void addPlaylistItem(Long userId, AddPlaylistItemDto addPlaylistItemDto) {
-        String playlistPublicId = addPlaylistItemDto.getPlaylistPublicId();
+    public void addPlaylistItem(Long userId, String playlistPublicId, AddPlaylistItemDto addPlaylistItemDto) {
         String musicPublicId = addPlaylistItemDto.getMusicPublicId();
 
         Playlist playlist = playlistRepository.findByPublicId(playlistPublicId)
                 .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_NOT_FOUND));
         Music music = musicService.findMusicEntity(musicPublicId);
 
-        Boolean isExistsInPlaylist = playlistRepository.isMusicExistsInPlaylist(playlistPublicId, musicPublicId);
+        Boolean isExistsInPlaylist = playlistItemRepository.isMusicExistsInPlaylist(playlistPublicId, musicPublicId);
         if (isExistsInPlaylist) {
             throw new ServiceException(ServiceErrorCode.PLAYLIST_MUSIC_EXISTS);
         }
 
-        Integer maxPosition = playlistItemRepository.findMaxPositionByPlaylistId(playlist.getId())
-                        .orElse(0);
+        playlistRepository.increaseItemCount(playlist.getId());
 
+        Integer maxPosition = playlistItemRepository.findMaxPosition(playlist.getId())
+                .orElse(0);
         PlaylistItem playlistItem = playlist.addItem(music, maxPosition + playlistItemPositionGap);
         playlistItemRepository.save(playlistItem);
     }
 
-    // TODO: 플리 음악 삭제 구현
+    @Transactional
+    public void removePlaylistItem(Long userId, String playlistPublicId, RemovePlaylistItemDto removePlaylistItemDto) {
+        String musicPublicId = removePlaylistItemDto.getMusicPublicId();
+
+        playlistRepository.decreaseItemCount(playlistPublicId);
+
+        PlaylistItem playlistItem = playlistItemRepository.findPlaylistItem(playlistPublicId, musicPublicId)
+                .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_ITEM_NOT_FOUND));
+        playlistItemRepository.delete(playlistItem);
+    }
 
     @Transactional
     public IdDto createPlaylist(Long userId, String title) {
