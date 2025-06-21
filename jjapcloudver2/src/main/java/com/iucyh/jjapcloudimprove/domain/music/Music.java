@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class Music extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 32, nullable = false, unique = true, updatable = false)
