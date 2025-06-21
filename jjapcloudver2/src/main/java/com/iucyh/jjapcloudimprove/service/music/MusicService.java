@@ -27,6 +27,11 @@ public class MusicService {
     private final MusicRepository musicRepository;
     private final MusicQueryRepository musicQueryRepository;
 
+    public Music findMusicEntity(String publicId) {
+        return musicRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new ServiceException(ServiceErrorCode.MUSIC_NOT_FOUND));
+    }
+
     public List<MusicDto> findMusics(LocalDateTime date) {
         List<MusicSimpleDto> musics = musicQueryRepository.findMusics(date, pagingLimit);
         return musics.stream()

@@ -17,6 +17,7 @@ public enum ServiceErrorCode implements ErrorCode {
 
     // PLAYLIST
     PLAYLIST_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAYLIST-001", "Playlist not found"),
+    PLAYLIST_MUSIC_EXISTS(HttpStatus.BAD_REQUEST, "PLAYLIST-002", "Music exists in playlist"),
 
     // RANGE
     INVALID_RANGE_FORMAT(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, "RANGE-001", "Invalid range format");

@@ -1,6 +1,7 @@
 package com.iucyh.jjapcloudimprove.domain.playlist;
 
 import com.iucyh.jjapcloudimprove.domain.BaseEntity;
+import com.iucyh.jjapcloudimprove.domain.music.Music;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -45,5 +46,13 @@ public class Playlist extends BaseEntity {
         if(title != null) {
             this.title = title;
         }
+    }
+
+    public PlaylistItem addItem(Music music, Integer position) {
+        PlaylistItem playlistItem = PlaylistItem.of(position, this, music);
+        playlistItems.add(playlistItem);
+        itemCount++;
+
+        return playlistItem;
     }
 }
