@@ -78,23 +78,23 @@ public class PlaylistService {
             throw new ServiceException(ServiceErrorCode.PLAYLIST_MUSIC_EXISTS);
         }
 
-        playlistRepository.increaseItemCount(playlist.getId());
-
         Integer maxPosition = playlistItemRepository.findMaxPosition(playlist.getId())
                 .orElse(0);
         PlaylistItem playlistItem = playlist.addItem(music, maxPosition + playlistItemPositionGap);
         playlistItemRepository.save(playlistItem);
+
+        playlistRepository.increaseItemCount(playlist.getId());
     }
 
     @Transactional
     public void removePlaylistItem(Long userId, String playlistPublicId, RemovePlaylistItemDto removePlaylistItemDto) {
         String musicPublicId = removePlaylistItemDto.getMusicPublicId();
 
-        playlistRepository.decreaseItemCount(playlistPublicId);
-
         PlaylistItem playlistItem = playlistItemRepository.findPlaylistItem(playlistPublicId, musicPublicId)
                 .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_ITEM_NOT_FOUND));
         playlistItemRepository.delete(playlistItem);
+
+        playlistRepository.decreaseItemCount(playlistPublicId);
     }
 
     @Transactional
