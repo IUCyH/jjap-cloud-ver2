@@ -5,7 +5,6 @@ import com.iucyh.jjapcloudimprove.domain.music.Music;
 import com.iucyh.jjapcloudimprove.domain.playlist.Playlist;
 import com.iucyh.jjapcloudimprove.domain.playlist.PlaylistItem;
 import com.iucyh.jjapcloudimprove.dto.playlist.AddPlaylistItemDto;
-import com.iucyh.jjapcloudimprove.dto.playlist.RemovePlaylistItemDto;
 import com.iucyh.jjapcloudimprove.repository.music.MusicRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.PlaylistItemRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.PlaylistRepository;
@@ -102,10 +101,8 @@ class PlaylistServiceTest {
         em.clear();
 
         // then
-        RemovePlaylistItemDto removeDto = new RemovePlaylistItemDto();
-        removeDto.setMusicPublicId(music.getPublicId());
         assertThatThrownBy(
-                () -> playlistService.removePlaylistItem(1L, playlist.getPublicId(), removeDto)
+                () -> playlistService.removePlaylistItem(1L, playlist.getPublicId(), music.getPublicId())
         ).isInstanceOf(ServiceException.class);
     }
 }
