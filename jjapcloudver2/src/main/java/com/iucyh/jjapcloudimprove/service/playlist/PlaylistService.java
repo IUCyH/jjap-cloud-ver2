@@ -96,17 +96,17 @@ public class PlaylistService {
     }
 
     @Transactional
-    public IdDto createPlaylist(Long userId, String title) {
-        Playlist playlist = Playlist.of(title);
+    public IdDto createPlaylist(Long userId, CreatePlaylistDto dto) {
+        Playlist playlist = Playlist.of(dto.getTitle());
         playlistRepository.save(playlist);
         return new IdDto(playlist.getPublicId());
     }
 
     @Transactional
-    public void updatePlaylist(Long userId, String publicId, String title) {
+    public void updatePlaylist(Long userId, String publicId, UpdatePlaylistDto dto) {
         Playlist foundPlaylist = playlistRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new ServiceException(ServiceErrorCode.PLAYLIST_NOT_FOUND));
-        foundPlaylist.update(title);
+        foundPlaylist.update(dto.getTitle());
     }
 
     @Transactional
