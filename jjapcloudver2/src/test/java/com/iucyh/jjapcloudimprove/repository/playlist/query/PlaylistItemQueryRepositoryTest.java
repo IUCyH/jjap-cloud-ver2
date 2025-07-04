@@ -3,7 +3,6 @@ package com.iucyh.jjapcloudimprove.repository.playlist.query;
 import com.iucyh.jjapcloudimprove.domain.music.Music;
 import com.iucyh.jjapcloudimprove.domain.playlist.Playlist;
 import com.iucyh.jjapcloudimprove.domain.playlist.PlaylistItem;
-import com.iucyh.jjapcloudimprove.dto.playlist.query.PlaylistItemSimpleDto;
 import com.iucyh.jjapcloudimprove.repository.music.MusicRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.PlaylistItemRepository;
 import com.iucyh.jjapcloudimprove.repository.playlist.PlaylistRepository;
@@ -60,9 +59,9 @@ class PlaylistItemQueryRepositoryTest {
         em.clear();
 
         // when
-        List<PlaylistItemSimpleDto> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
-        List<PlaylistItemSimpleDto> playlistItemsWithoutMusic1 = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, playlistItem1.getMusic().getTitle(), playlistItem1.getId(), 10);
-        List<PlaylistItemSimpleDto> playlistItemsByPosition = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.POSITION, playlistItem2.getPosition().toString(), playlistItem2.getId(), 10);
+        List<PlaylistItem> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
+        List<PlaylistItem> playlistItemsWithoutMusic1 = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, playlistItem1.getMusic().getTitle(), playlistItem1.getId(), 10);
+        List<PlaylistItem> playlistItemsByPosition = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.POSITION, playlistItem2.getPosition().toString(), playlistItem2.getId(), 10);
 
         // then
         assertThat(allPlaylistItems).hasSize(3);
@@ -115,7 +114,7 @@ class PlaylistItemQueryRepositoryTest {
         em.clear();
 
         // when
-        List<PlaylistItemSimpleDto> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
+        List<PlaylistItem> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
 
         // then
         assertThat(allPlaylistItems).hasSize(2);
@@ -161,7 +160,7 @@ class PlaylistItemQueryRepositoryTest {
         em.clear();
 
         // when
-        List<PlaylistItemSimpleDto> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
+        List<PlaylistItem> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
 
         // then
         assertThat(allPlaylistItems).hasSize(3); // 플리 1은 3개, 플리 2는 2개 -> 플리 1 기준으로 조회 하므로 3개가 나와야 함
@@ -178,7 +177,7 @@ class PlaylistItemQueryRepositoryTest {
         em.clear();
 
         // when
-        List<PlaylistItemSimpleDto> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
+        List<PlaylistItem> allPlaylistItems = playlistItemQueryRepository.findPlaylistItems(playlist.getId(), PlaylistItemSortType.MUSIC_TITLE, "", 0L, 10);
 
         // then
         assertThat(allPlaylistItems).isEmpty();

@@ -1,11 +1,10 @@
 package com.iucyh.jjapcloudimprove.repository.playlist.query;
 
 import com.iucyh.jjapcloudimprove.domain.music.QMusic;
+import com.iucyh.jjapcloudimprove.domain.playlist.PlaylistItem;
 import com.iucyh.jjapcloudimprove.domain.playlist.QPlaylist;
 import com.iucyh.jjapcloudimprove.domain.playlist.QPlaylistItem;
 import com.iucyh.jjapcloudimprove.dto.music.query.QMusicSimpleDto;
-import com.iucyh.jjapcloudimprove.dto.playlist.query.PlaylistItemSimpleDto;
-import com.iucyh.jjapcloudimprove.dto.playlist.query.QPlaylistItemSimpleDto;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,8 +22,7 @@ public class PlaylistItemQueryRepository {
         this.query = new JPAQueryFactory(em);
     }
 
-    public List<PlaylistItemSimpleDto> findPlaylistItems(Long playlistId, PlaylistItemSortType sortType, String cursor, Long cursorId, long limit) {
-        QPlaylist playlist = QPlaylist.playlist;
+    public List<PlaylistItem> findPlaylistItems(Long playlistId, PlaylistItemSortType sortType, String cursor, Long cursorId, long limit) {
         QPlaylistItem playlistItem = QPlaylistItem.playlistItem;
         QMusic music = QMusic.music;
 
@@ -41,22 +39,10 @@ public class PlaylistItemQueryRepository {
         };
 
         return query
-                .select(new QPlaylistItemSimpleDto(
-                        playlistItem.id,
-                        playlistItem.position,
-                        new QMusicSimpleDto(
-                                music.publicId,
-                                music.title,
-                                music.playTime,
-                                music.viewCount,
-                                music.createdAt,
-                                music.updatedAt
-                        )
-                ))
+                .select(playlistItem)
                 .from(playlistItem)
-                .join(playlistItem.music, music).on(music.deletedAt.isNull())
-                .join(playlistItem.playlist, playlist)
-                .where(playlist.id.eq(playlistId), condition)
+                .join(playlistItem.music, music).fetchJoin()
+                .where(playlistItem.playlist.id.eq(playlistId), music.deletedAt.isNull(), condition)
                 .orderBy(orderCondition, playlistItem.id.asc())
                 .limit(limit)
                 .fetch();
